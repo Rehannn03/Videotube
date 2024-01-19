@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import deleteImage from "../utils/deleteImage.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   // validation - not empty
@@ -261,9 +262,9 @@ const updateUserAvatar=asyncHandler(async(req,res)=>{
     if(!avatarPath){
         throw new ApiError(400,"avatar file required")
     }
-
-    const avatar=await uploadOnCloudinary(avatarPath)
-
+    // console.log(avatar.public_id)
+    const avatar=await uploadOnCloudinary(avatarPath)   
+    // const deletedImage=deleteImage(avatar.public_id) 
     const user=await User.findByIdAndUpdate(req.user._id,{
         avatar:avatar.url
     },{new:true}).select("-password -refreshToken")
@@ -285,7 +286,7 @@ const updateUserCoverImage=asyncHandler(async(req,res)=>{
     }
 
     const coverImage=await uploadOnCloudinary(coverImagePath)
-
+    deleteImage(coverImage.public_id)
     const user=await User.findByIdAndUpdate(req.user._id,{
         coverImage:coverImage.url
     },{new:true}).select("-password -refreshToken")
@@ -299,4 +300,13 @@ const updateUserCoverImage=asyncHandler(async(req,res)=>{
     )
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, changePassword, getCurrentUser, updateAccountDetails, updateUserAvatar };
+export { 
+    registerUser, 
+    loginUser, 
+    logoutUser, 
+    refreshAccessToken, 
+    changePassword, 
+    getCurrentUser, 
+    updateAccountDetails, 
+    updateUserAvatar, 
+    updateUserCoverImage };
