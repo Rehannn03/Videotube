@@ -258,7 +258,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updateUserAvatar=asyncHandler(async(req,res)=>{
     const avatarPath=req.file.path
-    console.log(req.file)
+    const avatarURL=req.user.avatar
+    const avatarPublicId=avatarURL.split("/")[avatarURL.split("/").length-1].split(".")[0]
+    const deleteImage=await deleteImage(avatarPublicId)
     if(!avatarPath){
         throw new ApiError(400,"avatar file required")
     }
